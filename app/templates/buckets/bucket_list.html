@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block contents %}
+
+<div class="col-12">
+
+    <h3><i class="fas fa-cubes"></i> {{ heading }}</h3>
+    Total items : {{ buckets|length }}
+    <hr>
+    <ul class="list-group">
+        {% for bucket in buckets %}
+            <a href="{% url 'buckets:bucket-detail' pk=bucket.pk %}" class="list-group-item list-group-item-action list-group-item-primary"><i class="fas fa-cube"></i> {{ bucket.title }}</a>
+        {% empty %}
+        No items
+        {% endfor %}
+    </ul>
+
+</div>
+
+{% endblock contents %}

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'account',
+    'buckets',
 ]
 
 MIDDLEWARE = [
@@ -146,5 +147,5 @@ MESSAGE_TAGS = {
     messages.ERROR : 'alert-danger'
 }
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/bucket/all/'
 LOGOUT_REDIRECT_URL = '/'
