@@ -11,7 +11,7 @@
         {% for bucket in buckets %}
             <a href="{% url 'buckets:bucket-detail' pk=bucket.pk %}" class="list-group-item list-group-item-action list-group-item-primary"><i class="fas fa-cube"></i> {{ bucket.title }}</a>
         {% empty %}
-        No items
+        You have no buckets! Please create using the '+' option.
         {% endfor %}
     </ul>
 

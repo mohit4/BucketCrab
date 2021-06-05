@@ -5,6 +5,7 @@
 <div class="col-12">
 
     <h3>{{ bucket.title }}</h3>
+    <br>
     <a class="btn btn-primary btn-sm" href="{% url 'buckets:bucket-update' pk=bucket.pk %}"><i class="fas fa-edit"></i> Edit</a>
     <a class="btn btn-danger btn-sm" href="" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-trash-alt"></i> delete</a>
     <a class="btn btn-warning btn-sm" href="{% url 'buckets:bucket-list' %}"><i class="fas fa-angle-double-left"></i> back to listing</a>

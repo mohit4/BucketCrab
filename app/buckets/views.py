@@ -19,11 +19,14 @@ def index(request):
 
     if search_bucket:
         buckets = Bucket.objects.filter(
-            Q(title__icontains=search_bucket)
-            | Q(description__icontains=search_bucket)
+            (
+                Q(title__icontains=search_bucket)
+                | Q(description__icontains=search_bucket)
+            )
+            & Q(user=request.user)
         )
     else:
-        buckets = Bucket.objects.all().order_by("-title")
+        buckets = Bucket.objects.filter(user=request.user).order_by("-title")
     
     context = {
         'buckets': buckets,
@@ -89,6 +92,9 @@ class BucketListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["heading"] = "Listing all bucket(s)"
         return context
+    
+    def get_queryset(self, **kwargs):
+        return Bucket.objects.filter(user=self.request.user)
 
 
 class BucketDetailView(LoginRequiredMixin, DetailView):
