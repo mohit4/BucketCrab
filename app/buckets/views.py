@@ -181,7 +181,7 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["checklistitems"] = CheckListItem.objects.filter(task=self.get_object()).order_by('-created')
+        context["checklistitems"] = CheckListItem.objects.filter(task=self.get_object()).order_by('-modified')
         context["activities"] = Activity.objects.filter(task=self.get_object()).order_by('-created')
         return context
 
@@ -229,7 +229,7 @@ def mark_complete_item(request, task_pk, item_pk):
     task.completedItems += 1
     task.progress = task.completedItems*100/task.totalItems
     task.save()
-    activity = Activity(text=f'Mark completed -> {task.title}', task=task)
+    activity = Activity(text=f'Mark completed -> {checklistitem.text}', task=task)
     activity.save()
     return redirect('buckets:task-detail', pk=task_pk)
 
