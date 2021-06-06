@@ -35,12 +35,32 @@
                 <ul class="list-group list-group-flush">
                     {% for checklistitem in checklistitems %}
                         <li class="list-group-item">
-                            {% if checklistitem.is_completed %}
-                                <span class="text-success"><i class="fas fa-check"></i> </span>
-                            {% else %}
-                                <span class="text-secondary"><i class="far fa-square"></i> </span>
-                            {% endif %}
-                            {{ checklistitem.text }}
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-1">
+                                  {% if checklistitem.is_completed %}
+                                      <span class="text-success"><i class="fas fa-check"></i> </span>
+                                  {% else %}
+                                      <span class="text-secondary"><i class="far fa-square"></i> </span>
+                                  {% endif %}
+                                </div>
+                                <div class="col-8">
+                                  {% if checklistitem.is_completed %}
+                                    <span class="text-secondary"><em><del>{{ checklistitem.text }}</del></em></span>
+                                  {% else %}
+                                    {{ checklistitem.text }}
+                                  {% endif %}
+                                </div>
+                                <div class="col-3">
+                                  {% if not checklistitem.is_completed %}
+                                    <form method="POST" action="{% url 'buckets:mark-complete-item' task_pk=task.pk item_pk=checklistitem.pk %}">
+                                      {% csrf_token %}
+                                      <button class="btn btn-primary btn-sm" type="submit">Mark Complete</button>
+                                    </form>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </div>
                         </li>
                     {% empty %}
                         <li class="list-group-item">No items!</li>
@@ -54,7 +74,7 @@
                 <ul class="list-group list-group-flush">
                     {% for activity in activities %}
                         <li class="list-group-item">
-                            {{ activity.text }}
+                            <span class="text-primary">{{ activity.created }}</span> {{ activity.text }}
                         </li>
                     {% empty %}
                         <li class="list-group-item">No activity logged!</li>

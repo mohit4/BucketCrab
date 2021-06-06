@@ -5,6 +5,7 @@ from .views import index
 from .views import TaskCreateView, TaskDetailView
 from .views import CheckListItemCreateView
 from .views import ActivityCreateView
+from .views import mark_complete_item
 
 app_name = 'buckets'
 
@@ -20,4 +21,6 @@ urlpatterns = [
     path('bucket/task/<int:pk>/', TaskDetailView.as_view(), name='task-detail' ),
     path('bucket/task/<int:pk>/addCheckListItem/', CheckListItemCreateView.as_view(), name='checklistitem-create' ),
     path('bucket/task/<int:pk>/logActivity/', ActivityCreateView.as_view(), name='activity-log' ),
+
+    path('bucket/task/<int:task_pk>/checklistitem/<int:item_pk>/', mark_complete_item, name='mark-complete-item' ),
 ]

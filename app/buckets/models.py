@@ -42,12 +42,15 @@ class Task(TimeStampedModel):
     Activities can be logged onto tasks.
     """
     title = models.CharField(max_length=100, help_text='Summary of the task')
+    totalItems = models.PositiveIntegerField(default=0)
+    completedItems = models.PositiveIntegerField(default=0)
+    progress = models.PositiveIntegerField(default=0)
 
     bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE, related_name='tasks')
 
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return reverse("buckets:bucket-detail", kwargs={"pk":self.bucket.pk})
 

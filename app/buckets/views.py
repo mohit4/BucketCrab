@@ -7,6 +7,8 @@ from django.db.models import Q
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
+from django.urls import reverse
 
 from .models import Bucket
 from .models import Task
@@ -179,8 +181,8 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["checklistitems"] = CheckListItem.objects.filter(task=self.get_object())
-        context["activities"] = Activity.objects.filter(task=self.get_object())
+        context["checklistitems"] = CheckListItem.objects.filter(task=self.get_object()).order_by('-created')
+        context["activities"] = Activity.objects.filter(task=self.get_object()).order_by('-created')
         return context
 
 
@@ -211,7 +213,25 @@ class CheckListItemCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateVie
 
     def form_valid(self, form):
         form.instance.task = self.task
+        self.task.totalItems += 1
+        self.task.progress = self.task.completedItems*100/self.task.totalItems
+        self.task.save()
+        activity = Activity(text=f'New item added -> {form.instance.text}', task=self.task)
+        activity.save()
         return super().form_valid(form)
+
+
+def mark_complete_item(request, task_pk, item_pk):
+    checklistitem = CheckListItem.objects.get(pk=item_pk)
+    checklistitem.is_completed = True
+    checklistitem.save()
+    task = Task.objects.get(pk=task_pk)
+    task.completedItems += 1
+    task.progress = task.completedItems*100/task.totalItems
+    task.save()
+    activity = Activity(text=f'Mark completed -> {task.title}', task=task)
+    activity.save()
+    return redirect('buckets:task-detail', pk=task_pk)
 
 
 #####################################################################################
