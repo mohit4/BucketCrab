@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block contents %}
+
+<div class="col-12">
+
+    <h3>{{ task.title }}</h3>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'buckets:bucket-detail' pk=task.bucket.pk %}">{{ task.bucket.title }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ task.title }}</li>
+        </ol>
+    </nav>
+    <h5><span class="badge badge-pill badge-success">Open</span></h5>
+
+    <div class="card mt-4">
+      <div class="card-body">
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="checklist-tab" data-toggle="tab" href="#checklist" role="tab" aria-controls="checklist" aria-selected="true">Checklist <span class="badge badge-primary">{{ checklistitems|length }}</span></a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="activity-tab" data-toggle="tab" href="#activity" role="tab" aria-controls="activity" aria-selected="false">Activities <span class="badge badge-primary">{{ activities|length }}</span></a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="false">Details</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane py-4 fade show active" id="checklist" role="tabpanel" aria-labelledby="checklist-tab">
+                <a class="btn btn-success btn-sm" href="{% url 'buckets:checklistitem-create' pk=task.pk %}">
+                    <i class="fas fa-plus-circle"></i> New item
+                </a>
+                <ul class="list-group list-group-flush">
+                    {% for checklistitem in checklistitems %}
+                        <li class="list-group-item">
+                            {% if checklistitem.is_completed %}
+                                <span class="text-success"><i class="fas fa-check"></i> </span>
+                            {% else %}
+                                <span class="text-secondary"><i class="far fa-square"></i> </span>
+                            {% endif %}
+                            {{ checklistitem.text }}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No items!</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="tab-pane py-4 fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+                <a class="btn btn-success btn-sm" href="{% url 'buckets:activity-log' pk=task.pk %}">
+                    <i class="fas fa-plus-circle"></i> Log activity
+                </a>
+                <ul class="list-group list-group-flush">
+                    {% for activity in activities %}
+                        <li class="list-group-item">
+                            {{ activity.text }}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No activity logged!</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th scope="row" style="width: 18rem;">Title</th>
+                            <td>{{ task.title }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <a class="btn btn-primary btn-sm" href="#">
+                                <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a class="btn btn-danger btn-sm" href="" data-toggle="modal" data-target="#exampleModal">
+                                <i class="fas fa-trash-alt"></i> delete
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+      </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Are you sure ?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        This will delete bucket : <strong>{{ bucket.title }}</strong> and it will never be recovered.
+      </div>
+      <div class="modal-footer">
+        <form method="POST" action="#">
+        {% csrf_token %}
+        <input type="submit" class="btn btn-danger" value="Yes" />
+        </form>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock contents %}

@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Bucket
+from .models import Task
+from .models import CheckListItem, Activity
 
 
 def index(request):
@@ -34,6 +36,11 @@ def index(request):
     }
 
     return render(request, "buckets/bucket_list.html", context)
+
+
+#####################################################################################
+# Bucket Views
+#####################################################################################
 
 
 class BucketCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -107,6 +114,11 @@ class BucketDetailView(LoginRequiredMixin, DetailView):
 
     login_url = '/'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tasks"] = Task.objects.filter(bucket=self.get_object())
+        return context
+
 
 class BucketDeleteView(LoginRequiredMixin, DeleteView):
     """
@@ -123,3 +135,110 @@ class BucketDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.error(self.request, self.success_message)
         return super(BucketDeleteView, self).delete(request, *args, **kwargs)
+
+
+#####################################################################################
+# Task Views
+#####################################################################################
+
+
+class TaskCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    """
+    Adding a new task under a bucket
+    """
+    template_name = "buckets/task_form.html"
+    model = Task
+    fields = ('title',)
+    success_message = 'Added new task!'
+
+    login_url = '/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["heading"] = "Create new task"
+        return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.bucket = Bucket.objects.get(pk=kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.bucket = self.bucket
+        return super().form_valid(form)
+
+
+class TaskDetailView(LoginRequiredMixin, DetailView):
+    """
+    Showing details of a task
+    """
+    template_name = "buckets/task_detail.html"
+    model = Task
+    context_object_name = "task"
+
+    login_url = '/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["checklistitems"] = CheckListItem.objects.filter(task=self.get_object())
+        context["activities"] = Activity.objects.filter(task=self.get_object())
+        return context
+
+
+#####################################################################################
+# Checklist Views
+#####################################################################################
+
+
+class CheckListItemCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    """
+    Adding a new check list item under a bucket
+    """
+    template_name = "buckets/checklist_form.html"
+    model = CheckListItem
+    fields = ('text',)
+    success_message = 'Added new checklist item!'
+
+    login_url = '/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["heading"] = "Create new checklist item"
+        return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.task = Task.objects.get(pk=kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.task = self.task
+        return super().form_valid(form)
+
+
+#####################################################################################
+# Activity Views
+#####################################################################################
+
+
+class ActivityCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    """
+    Adding a new check list item under a bucket
+    """
+    template_name = "buckets/checklist_form.html"
+    model = Activity
+    fields = ('text',)
+    success_message = 'Logged activity!'
+
+    login_url = '/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["heading"] = "Log activity"
+        return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.task = Task.objects.get(pk=kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.task = self.task
+        return super().form_valid(form)

@@ -34,3 +34,51 @@ class Bucket(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse("buckets:bucket-detail", kwargs={"pk":self.pk})
+
+
+class Task(TimeStampedModel):
+    """
+    A task can be placed into a bucket.
+    Activities can be logged onto tasks.
+    """
+    title = models.CharField(max_length=100, help_text='Summary of the task')
+
+    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE, related_name='tasks')
+
+    def __str__(self):
+        return self.title
+    
+    def get_absolute_url(self):
+        return reverse("buckets:bucket-detail", kwargs={"pk":self.bucket.pk})
+
+
+class Activity(TimeStampedModel):
+    """
+    A single activity that can be added to a task
+    """
+    text = models.TextField(help_text='Enter details of the activities performed')
+
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='activities')
+
+    def __str__(self):
+        return self.text
+    
+    def get_absolute_url(self):
+        return reverse("buckets:task-detail", kwargs={"pk":self.task.pk})
+
+
+class CheckListItem(TimeStampedModel):
+    """
+    A check list item is a single item from the check-list
+    """
+    text = models.CharField(max_length=100, help_text='Enter details of check list item')
+    is_completed = models.BooleanField(default=False)
+
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='checklistitems')
+
+    def __str__(self):
+        result = "completed" if self.is_completed else "not completed"
+        return f"{result} : {self.text}"
+    
+    def get_absolute_url(self):
+        return reverse("buckets:task-detail", kwargs={"pk":self.task.pk})
