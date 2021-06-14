@@ -148,5 +148,5 @@ MESSAGE_TAGS = {
     messages.ERROR : 'alert-danger'
 }
 
-LOGIN_REDIRECT_URL = '/bucket/all/'
+LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
