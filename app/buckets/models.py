@@ -27,6 +27,8 @@ class Bucket(TimeStampedModel):
 
     expiration_date = models.DateTimeField(null=True, blank=True, help_text='Bucket will be automatically closed on this date')
 
+    start_date = models.DateTimeField(null=True, blank=True)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='buckets')
 
     def __str__(self):

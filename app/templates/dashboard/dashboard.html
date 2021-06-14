@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block contents %}
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-12">
+      <h1>Your dashboard</h1>
+      <hr>
+      <div class="card-deck my-2">
+        <div class="card text-white bg-primary" >
+          <div class="card-body">
+            <h5 class="card-title">Planned</h5>
+            <p class="card-text"><h2 class="display-4">{{ planned_count }}</h2></p>
+          </div>
+          <div class="card-footer">
+            <a class="btn btn-sm btn-light">View projects</a>
+          </div>
+        </div>
+        <div class="card text-white bg-warning" >
+          <div class="card-body">
+            <h5 class="card-title">In Progress</h5>
+            <p class="card-text"><h2 class="display-4">{{ inprogress_count }}</h2></p>
+          </div>
+          <div class="card-footer">
+            <a class="btn btn-sm btn-light">View projects</a>
+          </div>
+        </div>
+        <div class="card text-white bg-success" >
+          <div class="card-body">
+            <h5 class="card-title">Completed</h5>
+            <p class="card-text"><h2 class="display-4">{{ completed_count }}</h2></p>
+          </div>
+          <div class="card-footer">
+            <a class="btn btn-sm btn-light">View projects</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <h5>Last active projects</h5>
+      <hr>
+      <div class="list-group">
+        {% for bucket in last_active_buckets %}
+          <a href="{% url 'buckets:bucket-detail' pk=bucket.pk %}" class="list-group-item list-group-item-action">{{ bucket.title }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock contents %}

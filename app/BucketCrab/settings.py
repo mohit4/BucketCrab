@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'account',
     'buckets',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
